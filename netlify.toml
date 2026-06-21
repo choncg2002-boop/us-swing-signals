@@ -1,0 +1,16 @@
+# Netlify — frontend (React/Vite) only
+# Backend API ต้องรันแยก (Render) แล้วตั้ง VITE_API_BASE_URL ใน Netlify Dashboard
+
+[build]
+  base = "frontend"
+  command = "npm ci && npm run build"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "20"
+
+# SPA — ทุก path ไป index.html
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200

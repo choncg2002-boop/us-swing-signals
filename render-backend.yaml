@@ -1,0 +1,24 @@
+# Backend API สำหรับคู่กับ Netlify frontend
+# Render Dashboard → New → Blueprint → เลือก repo → ใช้ไฟล์นี้ (หรือสร้าง Web Service จาก backend/Dockerfile)
+
+services:
+  - type: web
+    name: us-swing-api
+    runtime: docker
+    dockerfilePath: ./backend/Dockerfile
+    dockerContext: ./backend
+    plan: free
+    healthCheckPath: /api/v1/health
+    envVars:
+      - key: USE_SP500_UNIVERSE
+        value: "true"
+      - key: PRICE_POLL_INTERVAL_SEC
+        value: "60"
+      - key: RUNTIME_DIR
+        value: /data/runtime
+      - key: CORS_ORIGINS
+        value: "*"
+    disk:
+      name: us-swing-api-data
+      mountPath: /data/runtime
+      sizeGB: 1
