@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>US Swing Signals</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div id="root">
+      <div id="boot-splash" style="min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#0A0A0F;color:#A0A0B0;font-family:Inter,system-ui,sans-serif;gap:12px">
+        <div style="width:40px;height:40px;border:3px solid #2A2A35;border-top-color:#00FF88;border-radius:50%;animation:spin 0.8s linear infinite"></div>
+        <p style="margin:0;font-size:14px">กำลังโหลด US Technical Signals...</p>
+        <p style="margin:0;font-size:11px;color:#606070">ถ้าค้างเกิน 10 วินาที ให้รัน start.bat แล้ว refresh</p>
+      </div>
+    </div>
+    <style>@keyframes spin{to{transform:rotate(360deg)}}</style>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

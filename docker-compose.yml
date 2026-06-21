@@ -1,0 +1,42 @@
+services:
+  backend:
+    build:
+      context: ./backend
+    expose:
+      - "8000"
+    environment:
+      USE_SP500_UNIVERSE: "true"
+      PRICE_POLL_INTERVAL_SEC: "60"
+      BATCH_SIZE: "50"
+      BATCH_DELAY_SEC: "2"
+      RUNTIME_DIR: /data/runtime
+      CORS_ORIGINS: "*"
+    volumes:
+      - backend-data:/data/runtime
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/api/v1/health')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  frontend:
+    build:
+      context: ./frontend
+    ports:
+      - "0.0.0.0:80:80"
+    depends_on:
+      backend:
+        condition: service_healthy
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    profiles:
+      - with-redis
+    restart: unless-stopped
+
+volumes:
+  backend-data:

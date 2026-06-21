@@ -1,0 +1,54 @@
+# --- Python ---
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg
+*.egg-info/
+.eggs/
+dist/
+build/
+pip-wheel-metadata/
+
+# Virtual environments (any location)
+.venv/
+venv/
+env/
+ENV/
+backend/venv/
+backend/.venv/
+
+# --- App cache & runtime data (OHLCV, signals, yfinance) ---
+data/cache/
+data/cache/**
+!data/cache/.gitignore
+*.cache.json
+backend/data/
+
+# --- Environment & secrets ---
+.env
+.env.*
+!.env.example
+backend/.env
+
+# --- Node / Frontend ---
+node_modules/
+frontend/node_modules/
+frontend/dist/
+frontend/.env.local
+*.tsbuildinfo
+
+# --- IDE & OS ---
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# --- Logs & temp ---
+*.log
+*.tmp
+.cache/

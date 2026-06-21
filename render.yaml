@@ -1,0 +1,20 @@
+services:
+  - type: web
+    name: us-swing-signals
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    plan: free
+    healthCheckPath: /api/v1/health
+    envVars:
+      - key: USE_SP500_UNIVERSE
+        value: "true"
+      - key: PRICE_POLL_INTERVAL_SEC
+        value: "60"
+      - key: RUNTIME_DIR
+        value: /data/runtime
+      - key: CORS_ORIGINS
+        value: "*"
+    disk:
+      name: us-swing-data
+      mountPath: /data/runtime
+      sizeGB: 1
