@@ -9,8 +9,4 @@
 [build.environment]
   NODE_VERSION = "20"
 
-# SPA — ทุก path ไป index.html
-[[redirects]]
-  from = "/*"
-  to = "/index.html"
-  status = 200
+# SPA redirects สร้างตอน build ใน scripts/netlify-prebuild.mjs

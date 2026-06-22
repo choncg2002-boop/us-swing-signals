@@ -28,6 +28,7 @@ import type {
   SignalResult,
   Timeframe,
 } from "../types/signals";
+import { hasApiBaseUrl, isPublicHost } from "../utils/host";
 
 const DEFAULT_TICKER = "AAPL";
 
@@ -187,10 +188,34 @@ export default function Dashboard() {
       <main className="mx-auto max-w-[1600px] px-4 py-6 space-y-6">
         {backendOk === false && (
           <div className="rounded-lg border border-crimson/40 bg-crimson/10 px-4 py-3 text-sm text-crimson">
-            Backend ไม่ตอบสนอง — รันคำสั่งนี้ใน terminal แยก:
-            <code className="block mt-2 text-xs font-mono text-silver">
-              cd backend && uvicorn app.main:app --host 127.0.0.1 --port 8003 --reload
-            </code>
+            {isPublicHost() ? (
+              <>
+                <p className="font-semibold">Backend ยังไม่เชื่อม — หน้า Netlify ต้องมี API บน Render</p>
+                <ol className="mt-2 text-xs space-y-1 list-decimal list-inside opacity-90">
+                  <li>Deploy backend บน Render (Root Directory = <code className="font-mono">backend</code>)</li>
+                  <li>Netlify → Site configuration → Environment variables</li>
+                  <li>
+                    ใส่ <code className="font-mono">VITE_API_BASE_URL</code> = URL Render (เช่น https://us-swing-api.onrender.com)
+                  </li>
+                  <li>
+                    ใส่ <code className="font-mono">VITE_WS_BASE_URL</code> = wss://... (URL เดียวกัน เปลี่ยน https เป็น wss)
+                  </li>
+                  <li>Deploys → Trigger deploy</li>
+                </ol>
+                {!hasApiBaseUrl() && (
+                  <p className="mt-2 text-xs text-amber">
+                    ⚠ ตอน build ยังไม่มี VITE_API_BASE_URL — ต้อง Trigger deploy ใหม่หลังใส่ env
+                  </p>
+                )}
+              </>
+            ) : (
+              <>
+                Backend ไม่ตอบสนอง — รันคำสั่งนี้ใน terminal แยก:
+                <code className="block mt-2 text-xs font-mono text-silver">
+                  cd backend && uvicorn app.main:app --host 127.0.0.1 --port 8003 --reload
+                </code>
+              </>
+            )}
           </div>
         )}
 
@@ -205,9 +230,15 @@ export default function Dashboard() {
         {portfolioError && view === "signals" && (
           <div className="rounded-lg border border-amber/40 bg-amber/10 px-4 py-3 text-sm text-amber">
             Paper Trading ไม่พร้อม: {portfolioError}
-            <span className="block mt-1 text-xs opacity-90">
-              ปิด backend เก่าแล้วดับเบิลคลิก <code className="font-mono">start.bat</code> (port 8003)
-            </span>
+            {isPublicHost() ? (
+              <span className="block mt-1 text-xs opacity-90">
+                ตั้ง <code className="font-mono">VITE_API_BASE_URL</code> ใน Netlify แล้ว Trigger deploy ใหม่
+              </span>
+            ) : (
+              <span className="block mt-1 text-xs opacity-90">
+                ปิด backend เก่าแล้วดับเบิลคลิก <code className="font-mono">start.bat</code> (port 8003)
+              </span>
+            )}
           </div>
         )}
 

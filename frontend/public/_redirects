@@ -1,0 +1,3 @@
+/api/*  https://example.onrender.com/api/:splat  200
+/ws/*   wss://example.onrender.com/ws/:splat  200
+/*    /index.html   200
