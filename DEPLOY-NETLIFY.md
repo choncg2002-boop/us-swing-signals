@@ -1,91 +1,39 @@
-# Deploy บน Netlify — US Swing Signals
+# Deploy บน Netlify เท่านั้น (ไม่ต้องใช้ Render)
 
-Netlify โฮสต์ **หน้าเว็บ (frontend)** ได้  
-**Backend API** (Python/FastAPI + WebSocket + Paper Trading) ต้องรันบน **Render** (ฟรี) แล้วเชื่อม URL เข้ากัน
+เว็บนี้รันบน **Netlify อย่างเดียว**:
 
----
-
-## ขั้นที่ 1: Deploy Backend บน Render (~10 นาที)
-
-1. ไป [render.com](https://render.com) → Sign in ด้วย GitHub
-2. **New +** → **Web Service**
-3. เชื่อม repo **`choncg2002-boop/us-swing-signals`**
-4. ตั้งค่า (วิธีง่าย — ไม่ต้องหา Docker Context):
-
-   | ช่อง | ค่า |
-   |------|-----|
-   | Name | `us-swing-api` |
-   | **Root Directory** | **`backend`** ← สำคัญ |
-   | Runtime / Language | **Docker** |
-   | Branch | `main` |
-
-   > เมื่อใส่ Root Directory = `backend` แล้ว Render จะใช้ `backend/Dockerfile` อัตโนมัติ  
-   > **ไม่ต้อง** หาช่อง Docker Context แยก
-
-   หรือถ้ามีช่อง Dockerfile Path ให้ใส่: `Dockerfile` (relative ในโฟลเดอร์ backend)
-
-5. **Advanced** → Add Disk:
-   - Mount Path: `/data/runtime`
-   - Size: 1 GB
-
-6. Environment Variables:
-
-   ```
-   USE_SP500_UNIVERSE=true
-   RUNTIME_DIR=/data/runtime
-   CORS_ORIGINS=*
-   ```
-
-7. กด **Create Web Service** → รอ deploy จน **Live**
-
-8. **คัดลอก URL** เช่น `https://us-swing-api-xxxx.onrender.com`
+| ส่วน | ที่โฮสต์ |
+|------|----------|
+| หน้าเว็บ + API หุ้น | **Netlify Functions** |
+| Paper Trading | **localStorage ในเบราว์เซอร์** |
 
 ---
 
-## ขั้นที่ 2: Deploy Frontend บน Netlify (~5 นาที)
+## ขั้นตอน Deploy
 
-1. ไป [app.netlify.com](https://app.netlify.com) → Sign in ด้วย GitHub
-2. **Add new site** → **Import an existing project**
-3. เลือก **GitHub** → repo **`us-swing-signals`**
-4. Netlify อ่าน `netlify.toml` อัตโนมัติ — ไม่ต้องแก้ Build settings
-5. กด **Add environment variables** (สำคัญมาก):
-
-   | Key | Value (ตัวอย่าง) |
-   |-----|------------------|
-   | `VITE_API_BASE_URL` | `https://us-swing-api-xxxx.onrender.com` |
-   | `VITE_WS_BASE_URL` | `wss://us-swing-api-xxxx.onrender.com` |
-
-   > ใส่ URL จาก Render ขั้นที่ 1 — **ไม่มี** `/` ท้าย URL
-
-6. กด **Deploy site**
-
-7. ได้ URL เช่น `https://random-name.netlify.app`  
-   เปลี่ยนชื่อได้ที่ **Site configuration → Domain management**
+1. Push โค้ดขึ้น GitHub (`push-github.bat`)
+2. ไป [app.netlify.com](https://app.netlify.com) → **Import** repo `us-swing-signals`
+3. Netlify อ่าน `netlify.toml` อัตโนมัติ — **ไม่ต้องตั้ง env เพิ่ม**
+4. กด **Deploy site**
 
 ---
 
-## ขั้นที่ 3: ทดสอบ
+## หลัง Deploy
 
-เปิด URL Netlify แล้วเช็ก:
-
-- [ ] กราฟหุ้นโหลดได้
-- [ ] Paper Trading ซื้อ/ขายได้
-- [ ] แถบพอร์ตแสดงเงินสด
-
-ถ้า Backend ไม่ตอบ: Render อาจ sleep (แพลนฟรี) — รอ 30–60 วินาที แล้ว refresh
+- URL เช่น `https://xxx.netlify.app`
+- กด **Deploys → Trigger deploy** ทุกครั้งที่ push GitHub ใหม่
 
 ---
 
-## อัปเดตโค้ดในอนาคต
+## หมายเหตุ
 
-- Push ขึ้น GitHub → **Netlify deploy อัตโนมัติ**
-- Backend บน Render จะ rebuild ถ้าเชื่อม auto-deploy ไว้
+- **Paper Trading** เก็บในเบราว์เซอร์ — ล้าง cache / เปลี่ยนเครื่อง = ข้อมูลหาย
+- **ประวัติคำสั่ง** ล้างอัตโนมัติทุกวัน (ตาม timezone ไทย)
+- **Live price** อัปเดตทุก ~60 วินาที (ไม่มี WebSocket บน Netlify)
+- Scan หุ้นใช้ Yahoo Finance ผ่าน Netlify Functions
 
 ---
 
-## สรุป URL
+## Dev บนเครื่องตัวเอง
 
-| ส่วน | ที่โฮสต์ | URL |
-|------|----------|-----|
-| หน้าเว็บ | Netlify | `https://xxx.netlify.app` |
-| API + WebSocket | Render | `https://us-swing-api-xxxx.onrender.com` |
+ยังใช้ `start.bat` ได้ตามเดิม (backend Python บน port 8003)

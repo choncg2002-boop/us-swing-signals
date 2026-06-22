@@ -1,0 +1,8 @@
+{
+  "name": "us-swing-netlify-functions",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@netlify/functions": "^2.8.2"
+  }
+}

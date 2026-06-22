@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { signalWsUrl, type WsStatus } from "../api/websocket";
 import type { ScanSummary } from "../types/signals";
+import { isNetlifyOnlyMode } from "../utils/host";
 
 const RECONNECT_MS = 4000;
 
@@ -11,6 +12,11 @@ export function useSignalStream(onScanComplete?: (summary: ScanSummary) => void)
   callbackRef.current = onScanComplete;
 
   useEffect(() => {
+    if (isNetlifyOnlyMode()) {
+      setStatus("disconnected");
+      return;
+    }
+
     let alive = true;
     let retryTimer: ReturnType<typeof setTimeout> | undefined;
     let pingTimer: ReturnType<typeof setInterval> | undefined;

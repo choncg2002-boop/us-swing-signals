@@ -10,6 +10,8 @@ import type {
   PortfolioSummary,
   SellOrderRequest,
 } from "../types/portfolio";
+import { isNetlifyOnlyMode } from "../utils/host";
+import * as localPortfolio from "../lib/localPortfolio";
 
 /** Dev: call FastAPI directly — avoids Vite proxy issues on Windows */
 function apiBase(): string {
@@ -69,23 +71,28 @@ export function fetchUniverse(): Promise<{ source: string; count: number; ticker
 }
 
 export function fetchPortfolio(): Promise<PortfolioSummary> {
+  if (isNetlifyOnlyMode()) return localPortfolio.getPortfolio();
   return fetchJson("/api/v1/portfolio");
 }
 
 export function submitBuyOrder(req: BuyOrderRequest): Promise<PortfolioSummary> {
+  if (isNetlifyOnlyMode()) return localPortfolio.placeBuy(req);
   return fetchJsonPost("/api/v1/portfolio/orders/buy", req);
 }
 
 export function submitSellOrder(req: SellOrderRequest): Promise<PortfolioSummary> {
+  if (isNetlifyOnlyMode()) return localPortfolio.placeSell(req);
   return fetchJsonPost("/api/v1/portfolio/orders/sell", req);
 }
 
 export function resetPortfolio(initialCash?: number): Promise<PortfolioSummary> {
+  if (isNetlifyOnlyMode()) return localPortfolio.resetPortfolio(initialCash);
   const qs = initialCash != null ? `?initial_cash=${initialCash}` : "";
   return fetchJsonPost(`/api/v1/portfolio/reset${qs}`, {});
 }
 
 export function deletePosition(ticker: string): Promise<PortfolioSummary> {
+  if (isNetlifyOnlyMode()) return localPortfolio.deletePosition(ticker);
   return fetchJsonDelete(`/api/v1/portfolio/positions/${encodeURIComponent(ticker)}`);
 }
 
@@ -93,14 +100,17 @@ export function updatePosition(
   ticker: string,
   req: { shares: number; avg_cost: number },
 ): Promise<PortfolioSummary> {
+  if (isNetlifyOnlyMode()) return localPortfolio.updatePosition(ticker, req.shares, req.avg_cost);
   return fetchJsonPatch(`/api/v1/portfolio/positions/${encodeURIComponent(ticker)}`, req);
 }
 
 export function depositCash(amount: number): Promise<PortfolioSummary> {
+  if (isNetlifyOnlyMode()) return localPortfolio.depositCash(amount);
   return fetchJsonPost("/api/v1/portfolio/cash/deposit", { amount });
 }
 
 export function withdrawCash(amount: number): Promise<PortfolioSummary> {
+  if (isNetlifyOnlyMode()) return localPortfolio.withdrawCash(amount);
   return fetchJsonPost("/api/v1/portfolio/cash/withdraw", { amount });
 }
 

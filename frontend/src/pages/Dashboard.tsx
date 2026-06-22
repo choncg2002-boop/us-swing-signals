@@ -28,7 +28,7 @@ import type {
   SignalResult,
   Timeframe,
 } from "../types/signals";
-import { hasApiBaseUrl, isPublicHost } from "../utils/host";
+import { isPublicHost } from "../utils/host";
 
 const DEFAULT_TICKER = "AAPL";
 
@@ -190,23 +190,10 @@ export default function Dashboard() {
           <div className="rounded-lg border border-crimson/40 bg-crimson/10 px-4 py-3 text-sm text-crimson">
             {isPublicHost() ? (
               <>
-                <p className="font-semibold">Backend ยังไม่เชื่อม — หน้า Netlify ต้องมี API บน Render</p>
-                <ol className="mt-2 text-xs space-y-1 list-decimal list-inside opacity-90">
-                  <li>Deploy backend บน Render (Root Directory = <code className="font-mono">backend</code>)</li>
-                  <li>Netlify → Site configuration → Environment variables</li>
-                  <li>
-                    ใส่ <code className="font-mono">VITE_API_BASE_URL</code> = URL Render (เช่น https://us-swing-api.onrender.com)
-                  </li>
-                  <li>
-                    ใส่ <code className="font-mono">VITE_WS_BASE_URL</code> = wss://... (URL เดียวกัน เปลี่ยน https เป็น wss)
-                  </li>
-                  <li>Deploys → Trigger deploy</li>
-                </ol>
-                {!hasApiBaseUrl() && (
-                  <p className="mt-2 text-xs text-amber">
-                    ⚠ ตอน build ยังไม่มี VITE_API_BASE_URL — ต้อง Trigger deploy ใหม่หลังใส่ env
-                  </p>
-                )}
+                <p className="font-semibold">โหลดข้อมูลหุ้นไม่สำเร็จ</p>
+                <p className="mt-1 text-xs opacity-90">
+                  รอสักครู่แล้วกด Refresh — ถ้ายังไม่ได้ ให้ Netlify → Deploys → Trigger deploy ใหม่
+                </p>
               </>
             ) : (
               <>
@@ -232,7 +219,7 @@ export default function Dashboard() {
             Paper Trading ไม่พร้อม: {portfolioError}
             {isPublicHost() ? (
               <span className="block mt-1 text-xs opacity-90">
-                ตั้ง <code className="font-mono">VITE_API_BASE_URL</code> ใน Netlify แล้ว Trigger deploy ใหม่
+                Paper Trading เก็บในเบราว์เซอร์ (localStorage) — ข้อมูลอยู่เฉพาะเครื่องนี้
               </span>
             ) : (
               <span className="block mt-1 text-xs opacity-90">

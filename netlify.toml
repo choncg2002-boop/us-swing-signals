@@ -1,5 +1,4 @@
-# Netlify — frontend (React/Vite) only
-# Backend API ต้องรันแยก (Render) แล้วตั้ง VITE_API_BASE_URL ใน Netlify Dashboard
+# Netlify — frontend + serverless API (ไม่ต้องใช้ Render)
 
 [build]
   base = "frontend"
@@ -8,5 +7,19 @@
 
 [build.environment]
   NODE_VERSION = "20"
+  VITE_NETLIFY_ONLY = "true"
 
-# SPA redirects สร้างตอน build ใน scripts/netlify-prebuild.mjs
+[functions]
+  directory = "netlify/functions"
+  node_bundler = "esbuild"
+
+[[redirects]]
+  from = "/api/v1/*"
+  to = "/.netlify/functions/api"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
