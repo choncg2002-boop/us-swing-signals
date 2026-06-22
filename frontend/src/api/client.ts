@@ -26,11 +26,14 @@ function apiBase(): string {
 
 async function fetchJson<T>(path: string): Promise<T> {
   const res = await fetch(`${apiBase()}${path}`);
+  const text = await res.text();
   if (!res.ok) {
-    const detail = await res.text();
-    throw new Error(detail || `Request failed: ${res.status}`);
+    throw new Error(text || `Request failed: ${res.status}`);
   }
-  return res.json() as Promise<T>;
+  if (text.trimStart().startsWith("<")) {
+    throw new Error("API ส่ง HTML กลับมา — รอ Netlify deploy ใหม่ (Trigger deploy)");
+  }
+  return JSON.parse(text) as T;
 }
 
 export const QUICK_SCAN_TICKERS = [

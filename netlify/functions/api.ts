@@ -14,14 +14,33 @@ function json(statusCode: number, body: unknown) {
 }
 
 function getPathname(event: HandlerEvent): string {
+  if (event.path.startsWith("/api/v1")) return event.path.split("?")[0]!;
+
   if (event.rawUrl) {
     try {
-      return new URL(event.rawUrl).pathname;
+      const p = new URL(event.rawUrl).pathname;
+      if (p.startsWith("/api/v1")) return p;
     } catch {
       /* fall through */
     }
   }
-  return event.path.replace(/^\/\.netlify\/functions\/api\/?/, "/api/v1") || "/api/v1/health";
+
+  const forwarded =
+    event.headers["x-forwarded-uri"] ??
+    event.headers["X-Forwarded-Uri"] ??
+    event.headers["x-nf-request-url"];
+  if (forwarded) {
+    try {
+      const p = forwarded.startsWith("http")
+        ? new URL(forwarded).pathname
+        : forwarded.split("?")[0]!;
+      if (p.startsWith("/api/v1")) return p;
+    } catch {
+      /* fall through */
+    }
+  }
+
+  return "/api/v1/health";
 }
 
 export const handler: Handler = async (event: HandlerEvent) => {
