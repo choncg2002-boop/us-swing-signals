@@ -10,15 +10,19 @@ Netlify โฮสต์ **หน้าเว็บ (frontend)** ได้
 1. ไป [render.com](https://render.com) → Sign in ด้วย GitHub
 2. **New +** → **Web Service**
 3. เชื่อม repo **`choncg2002-boop/us-swing-signals`**
-4. ตั้งค่า:
+4. ตั้งค่า (วิธีง่าย — ไม่ต้องหา Docker Context):
 
    | ช่อง | ค่า |
    |------|-----|
    | Name | `us-swing-api` |
-   | Root Directory | *(ว่าง)* |
-   | Runtime | **Docker** |
-   | Dockerfile Path | `backend/Dockerfile` |
-   | Docker Context | `backend` |
+   | **Root Directory** | **`backend`** ← สำคัญ |
+   | Runtime / Language | **Docker** |
+   | Branch | `main` |
+
+   > เมื่อใส่ Root Directory = `backend` แล้ว Render จะใช้ `backend/Dockerfile` อัตโนมัติ  
+   > **ไม่ต้อง** หาช่อง Docker Context แยก
+
+   หรือถ้ามีช่อง Dockerfile Path ให้ใส่: `Dockerfile` (relative ในโฟลเดอร์ backend)
 
 5. **Advanced** → Add Disk:
    - Mount Path: `/data/runtime`
