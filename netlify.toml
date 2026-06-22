@@ -1,9 +1,9 @@
 # Netlify — frontend + serverless API (ไม่ต้องใช้ Render)
 
 [build]
-  base = "frontend"
-  command = "npm ci --prefix ../netlify/functions && npm ci && npm run build"
-  publish = "dist"
+  # อย่าใช้ base = "frontend" — จะทำให้ functions ไปอยู่ที่ frontend/netlify/functions (ไม่มีจริง)
+  command = "npm ci --prefix netlify/functions && npm ci --prefix frontend && npm run build --prefix frontend"
+  publish = "frontend/dist"
 
 [build.environment]
   NODE_VERSION = "20"
